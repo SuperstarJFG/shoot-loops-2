@@ -26,30 +26,33 @@ public class PlayerSpawner : MonoBehaviour
             players[i].GetComponent<PlayerController>().inputNameHorizontal = "Horizontal " + (i + 1);
             players[i].GetComponent<PlayerController>().inputNameVertical = "Vertical " + (i + 1);
             players[i].GetComponent<PlayerController>().inputNameFire = "Fire " + (i + 1);
+
+            players[i].transform.position = transform.GetChild(i).position;
+            players[i].transform.rotation = transform.GetChild(i).rotation;
         }
 
-        switch (playerCount)
-        {
-            case <= 2:
-                players[0].transform.position = new Vector3(2.5f, 2.5f, 0);
-                players[1].transform.position = new Vector3(-2.5f, -2.5f, 0);
-                players[1].transform.Rotate(0, 0, 180);
-                break;
-            case 3:
-                players[0].transform.position = new Vector3(-2.5f, 0, 0);
-                players[1].transform.position = new Vector3(0f, 0, 0);
-                players[2].transform.position = new Vector3(2.5f, 0, 0);
-                break;
-            case 4:
-                players[0].transform.position = new Vector3(2.5f, 2.5f, 0);
-                players[2].transform.position = new Vector3(-2.5f, 2.5f, 0);
+        //switch (playerCount)
+        //{
+        //    case <= 2:
+        //        players[0].transform.position = new Vector3(2.5f, 2.5f, 0);
+        //        players[1].transform.position = new Vector3(-2.5f, -2.5f, 0);
+        //        players[1].transform.Rotate(0, 0, 180);
+        //        break;
+        //    case 3:
+        //        players[0].transform.position = new Vector3(-2.5f, 0, 0);
+        //        players[1].transform.position = new Vector3(0f, 0, 0);
+        //        players[2].transform.position = new Vector3(2.5f, 0, 0);
+        //        break;
+        //    case 4:
+        //        players[0].transform.position = new Vector3(2.5f, 2.5f, 0);
+        //        players[2].transform.position = new Vector3(-2.5f, 2.5f, 0);
 
-                players[1].transform.position = new Vector3(-2.5f, -2.5f, 0);
-                players[3].transform.position = new Vector3(2.5f, -2.5f, 0);
-                players[1].transform.Rotate(0, 0, 180);
-                players[3].transform.Rotate(0, 0, 180);
-                break;
-        }
+        //        players[1].transform.position = new Vector3(-2.5f, -2.5f, 0);
+        //        players[3].transform.position = new Vector3(2.5f, -2.5f, 0);
+        //        players[1].transform.Rotate(0, 0, 180);
+        //        players[3].transform.Rotate(0, 0, 180);
+        //        break;
+        //}
     }
 
     void Update()

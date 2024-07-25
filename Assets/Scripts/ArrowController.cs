@@ -10,20 +10,21 @@ public class ArrowController : MonoBehaviour
     [SerializeField] private AudioClip fireSound;
 
     private Rigidbody2D rb;
-    private bool hadFirstCollision;
+    private float timeAlive;
     private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         GetComponent<SpriteRenderer>().color = transform.parent.GetComponent<PlayerController>().playerColor;
-        hadFirstCollision = false;
+        timeAlive = 0;
         audioSource = transform.parent.GetComponent<AudioSource>();
         audioSource.PlayOneShot(fireSound);
     }
 
     void Update()
     {
+        timeAlive += Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -34,21 +35,34 @@ public class ArrowController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name.Contains("Player") && hadFirstCollision)
+        if (collision.gameObject.name.Contains("Player"))
         {
             if (collision.gameObject == transform.parent.gameObject)
             {
-                collision.gameObject.GetComponent<PlayerController>().hp++;
-                audioSource.PlayOneShot(healSound);
+                if (timeAlive > 0.2f) {
+                    Hit(true);
+                }
             }
             else
             {
-                collision.gameObject.GetComponent<PlayerController>().hp--;
-                audioSource.PlayOneShot(hurtSound);
+                Hit(false);
             }
-            Destroy(gameObject);
-            transform.parent.GetComponent<PlayerController>().full = true;
         }
-        hadFirstCollision = true;
+    }
+
+    void Hit(bool self)
+    {
+        if (self)
+        {
+            transform.parent.GetComponent<PlayerController>().hp++;
+            audioSource.PlayOneShot(healSound);
+        }
+        else
+        {
+            transform.parent.GetComponent<PlayerController>().hp--;
+            audioSource.PlayOneShot(hurtSound);
+        }
+        Destroy(gameObject);
+        transform.parent.GetComponent<PlayerController>().full = true;
     }
 }
