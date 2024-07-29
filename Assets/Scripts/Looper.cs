@@ -14,11 +14,8 @@ public class Looper : MonoBehaviour
         
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        foreach (Transform child in transform)
-            childPositions.Add(child.position);
-
         newPosition = transform.position;
         if (transform.position.y > verticalBound)
             newPosition.y = -verticalBound + 0.01f;
@@ -29,9 +26,5 @@ public class Looper : MonoBehaviour
         if (transform.position.x < -horizontalBound)
             newPosition.x = horizontalBound - 0.01f;
         transform.position = newPosition;
-
-        foreach (Transform child in transform)
-            child.position = childPositions[0];
-        childPositions.Clear();
     }
 }

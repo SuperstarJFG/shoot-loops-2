@@ -15,25 +15,33 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Sprite heart_fixed_full;
     [SerializeField] private Sprite heart_fixed_charging;
     [SerializeField] private AudioClip lowSound;
+    [SerializeField] private AudioClip healSound;
+    [SerializeField] private AudioClip hurtSound;
+    [SerializeField] private AudioClip fireSound;
 
-    public string inputNameHorizontal;
-    public string inputNameVertical;
-    public string inputNameFire;
-    public Color playerColor;
-    [Range(0,2)] public int hp;
-    public bool full;
+    [Range(1,4)] public int playerNumber;
+    public Color color;
 
     private Rigidbody2D rb;
     private Vector2 inputVector;
     private Vector2 velocityVector;
     private AudioSource audioSource;
-    private float timeSinceLastFire;
+    [Range(0,2)] private int hp;
+    private bool full;
     private bool charging;
+    private float timeSinceLastFire;
+    private GameObject arrow;
+    private Color darkColor;
     
     void Start()
     {
+        color = new Color(UnityEngine.Random.Range(.1f, 1f), UnityEngine.Random.Range(.1f, 1f), UnityEngine.Random.Range(.1f, 1f));
+        GetComponent<SpriteRenderer>().color = color;
+        darkColor = color;
+        darkColor.a = 0.1f;
+
+        name = "Player " + playerNumber;
         rb = GetComponent<Rigidbody2D>();
-        GetComponent<SpriteRenderer>().color = playerColor;
         full = true;
         hp = 2;
         audioSource = GetComponent<AudioSource>();
@@ -47,11 +55,13 @@ public class PlayerController : MonoBehaviour
         else
             charging = false;
 
-        if (full && Input.GetAxisRaw(inputNameFire) > 0 && hp > 0 && !charging)
+        if (full && Input.GetAxisRaw("Fire " + playerNumber) > 0 && hp > 0 && !charging)
         {
-            Instantiate(arrowPrefab, transform);
+            arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
+            arrow.GetComponent<ArrowController>().owner = gameObject;
             full = false;
             timeSinceLastFire = 0;
+            audioSource.PlayOneShot(fireSound);
         }
         timeSinceLastFire += Time.deltaTime;
 
@@ -73,7 +83,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        if (Input.GetAxisRaw("R") > 0)
+        if (Input.GetAxisRaw("R") > 0 && Input.GetAxisRaw("Left Shift") > 0)
         {
             Restart();
         }
@@ -81,7 +91,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        inputVector = new Vector2(Input.GetAxisRaw(inputNameHorizontal), Input.GetAxisRaw(inputNameVertical));
+        inputVector = new Vector2(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
         if (hp > 0)
             rb.MovePosition(rb.position + inputVector * speed * Time.deltaTime);
     }
@@ -111,8 +121,23 @@ public class PlayerController : MonoBehaviour
 
     void Darken(bool darkening)
     {
-        Color temp = GetComponent<SpriteRenderer>().color;
-        temp.a = (darkening) ? 0.1f : 1f;
-        GetComponent<SpriteRenderer>().color = temp;
+        GetComponent<SpriteRenderer>().color = (darkening) ? darkColor : color;
+    }
+
+    public void Hurt()
+    {
+        hp--;
+        audioSource.PlayOneShot(hurtSound);
+    }
+
+    public void Heal()
+    {
+        hp++;
+        audioSource.PlayOneShot(healSound);
+    }
+
+    public void Fill()
+    {
+        full = true;
     }
 }

@@ -109,10 +109,10 @@ MonoBehaviour:
   heart_fixed_full: {fileID: 21300000, guid: 709f7929e4585e146af6ef51e14df922, type: 3}
   heart_fixed_charging: {fileID: 21300000, guid: bbeda47e93d38c943beea45827be1f48, type: 3}
   lowSound: {fileID: 8300000, guid: 9da4d19c9750db142b74917f008cfab9, type: 3}
-  inputNameHorizontal: 
-  inputNameVertical: 
-  inputNameFire: 
-  playerColor: {r: 0, g: 0, b: 0, a: 0}
+  healSound: {fileID: 8300000, guid: d66ad8c70b0542a41acefacaf8dc27b1, type: 3}
+  hurtSound: {fileID: 8300000, guid: 101fadc34ad71e54fb79ae4a4e422cb5, type: 3}
+  fireSound: {fileID: 8300000, guid: dca3592edefdf8f4e9923369725f02dd, type: 3}
+  playerNumber: 1
   hp: 0
   full: 0
 --- !u!50 &6572364289118855733

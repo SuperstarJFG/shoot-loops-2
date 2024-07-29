@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,21 +6,17 @@ using UnityEngine;
 public class ArrowController : MonoBehaviour
 {
     [SerializeField] private float speed;
-    [SerializeField] private AudioClip healSound;
-    [SerializeField] private AudioClip hurtSound;
-    [SerializeField] private AudioClip fireSound;
+
+    public GameObject owner;
 
     private Rigidbody2D rb;
     private float timeAlive;
-    private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        GetComponent<SpriteRenderer>().color = transform.parent.GetComponent<PlayerController>().playerColor;
+        GetComponent<SpriteRenderer>().color = owner.GetComponent<PlayerController>().color;
         timeAlive = 0;
-        audioSource = transform.parent.GetComponent<AudioSource>();
-        audioSource.PlayOneShot(fireSound);
     }
 
     void Update()
@@ -35,34 +32,23 @@ public class ArrowController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name.Contains("Player"))
+        if (collision.name.Contains("Player"))
         {
-            if (collision.gameObject == transform.parent.gameObject)
+            if (collision.gameObject == owner)
             {
-                if (timeAlive > 0.2f) {
-                    Hit(true);
+                if (timeAlive > 0.2f)
+                {
+                    collision.GetComponent<PlayerController>().Heal();
+                    owner.GetComponent<PlayerController>().Fill();
+                    Destroy(gameObject);
                 }
             }
             else
             {
-                Hit(false);
+                collision.GetComponent<PlayerController>().Hurt();
+                owner.GetComponent<PlayerController>().Fill();
+                Destroy(gameObject);
             }
         }
-    }
-
-    void Hit(bool self)
-    {
-        if (self)
-        {
-            transform.parent.GetComponent<PlayerController>().hp++;
-            audioSource.PlayOneShot(healSound);
-        }
-        else
-        {
-            transform.parent.GetComponent<PlayerController>().hp--;
-            audioSource.PlayOneShot(hurtSound);
-        }
-        Destroy(gameObject);
-        transform.parent.GetComponent<PlayerController>().full = true;
     }
 }
