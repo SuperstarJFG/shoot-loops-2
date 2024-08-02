@@ -3,26 +3,50 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField][Range(1, 4)] private int playerCount;
+    [SerializeField][Range(0, 4)] private int playerCount;
+    //[SerializeField] private GameObject[] spawnPoints = new GameObject[4];
 
-    private GameObject player;
+    private List<GameObject> players = new List<GameObject>();
+    private Transform spawnPoint;
 
     void Start()
     {
-        for (int i = 0; i < System.Math.Max(playerCount, 2); i++)
+        for (int i = 1; i < transform.childCount + 1; i++)
         {
-            player = Instantiate(playerPrefab, transform.GetChild(i).position, transform.GetChild(i).rotation);
+            spawnPoint = transform.GetChild(i - 1);
 
-            player.GetComponent<PlayerController>().playerNumber = i + 1;
+            if (i <= playerCount)
+            {
+                spawnPlayer(spawnPoint, i, false);
+            }
+            else if (i <= 2)
+            {
+                spawnPlayer(spawnPoint, i, true);
+            }
+
+            Destroy(spawnPoint.gameObject);
         }
     }
 
     void Update()
     {
 
+    }
+
+    void spawnPlayer(Transform spawnPoint, int playerNumber, bool isAI)
+    {
+        GameObject player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+        PlayerController PC = player.GetComponent<PlayerController>();
+        PC.playerNumber = playerNumber;
+        if (isAI)
+        {
+            PC.isAI = true;
+            player.AddComponent<AIController>();
+        }
     }
 }

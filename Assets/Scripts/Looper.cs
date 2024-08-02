@@ -7,7 +7,6 @@ public class Looper : MonoBehaviour
 {
     private float verticalBound = 5f;
     private float horizontalBound = 5f * 16f/9f;
-    private List<Vector3> childPositions = new List<Vector3>();
     private Vector3 newPosition;
     void Start()
     {

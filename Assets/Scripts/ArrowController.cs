@@ -11,11 +11,13 @@ public class ArrowController : MonoBehaviour
 
     private Rigidbody2D rb;
     private float timeAlive;
+    private PlayerController ownerPC;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        GetComponent<SpriteRenderer>().color = owner.GetComponent<PlayerController>().color;
+        ownerPC = owner.GetComponent<PlayerController>();
+        GetComponent<SpriteRenderer>().color = ownerPC.color;
         timeAlive = 0;
     }
 
@@ -38,15 +40,15 @@ public class ArrowController : MonoBehaviour
             {
                 if (timeAlive > 0.2f)
                 {
-                    collision.GetComponent<PlayerController>().Heal();
-                    owner.GetComponent<PlayerController>().Fill();
+                    ownerPC.Heal();
+                    ownerPC.Fill();
                     Destroy(gameObject);
                 }
             }
             else
             {
                 collision.GetComponent<PlayerController>().Hurt();
-                owner.GetComponent<PlayerController>().Fill();
+                ownerPC.Fill();
                 Destroy(gameObject);
             }
         }

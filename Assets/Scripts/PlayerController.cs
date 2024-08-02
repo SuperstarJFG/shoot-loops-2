@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Rendering;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private GameObject arrowPrefab;
+    [SerializeField] private GameObject AIOverlayPrefab;
     [SerializeField] private Sprite heart_broken_empty;
     [SerializeField] private Sprite heart_broken_full;
     [SerializeField] private Sprite heart_fixed_empty;
@@ -21,17 +23,19 @@ public class PlayerController : MonoBehaviour
 
     [Range(1,4)] public int playerNumber;
     public Color color;
+    public bool isAI;
 
     private Rigidbody2D rb;
     private Vector2 inputVector;
     private Vector2 velocityVector;
-    private AudioSource audioSource;
     [Range(0,2)] private int hp;
     private bool full;
     private bool charging;
     private float timeSinceLastFire;
+    private AudioSource audioSource;
     private GameObject arrow;
     private Color darkColor;
+    private AIController AIController;
     
     void Start()
     {
@@ -46,6 +50,11 @@ public class PlayerController : MonoBehaviour
         hp = 2;
         audioSource = GetComponent<AudioSource>();
         StartCoroutine(LowHP());
+
+        if (isAI)
+        {
+            Instantiate(AIOverlayPrefab, transform);
+        }
     }
 
     void Update()
@@ -55,7 +64,7 @@ public class PlayerController : MonoBehaviour
         else
             charging = false;
 
-        if (full && Input.GetAxisRaw("Fire " + playerNumber) > 0 && hp > 0 && !charging)
+        if (full && Input.GetAxisRaw("Fire " + playerNumber) > 0 && hp > 0 && !charging && !isAI)
         {
             arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
             arrow.GetComponent<ArrowController>().owner = gameObject;
@@ -92,7 +101,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         inputVector = new Vector2(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
-        if (hp > 0)
+        if (hp > 0 && !isAI)
             rb.MovePosition(rb.position + inputVector * speed * Time.deltaTime);
     }
 
