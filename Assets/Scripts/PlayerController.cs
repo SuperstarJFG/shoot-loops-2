@@ -23,19 +23,19 @@ public class PlayerController : MonoBehaviour
 
     [Range(1,4)] public int playerNumber;
     public Color color;
+    public Vector2 inputVector;
     public bool isAI;
 
     private Rigidbody2D rb;
-    private Vector2 inputVector;
     private Vector2 velocityVector;
     [Range(0,2)] private int hp;
     private bool full;
     private bool charging;
     private float timeSinceLastFire;
     private AudioSource audioSource;
-    private GameObject arrow;
     private Color darkColor;
     private AIController AIController;
+    private GameObject AIOverlay;
     
     void Start()
     {
@@ -52,25 +52,16 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(LowHP());
 
         if (isAI)
-        {
-            Instantiate(AIOverlayPrefab, transform);
-        }
+            AIOverlay = Instantiate(AIOverlayPrefab, transform);
     }
 
     void Update()
     {
-        if (timeSinceLastFire < 1)
-            charging = true;
-        else
-            charging = false;
+        charging = (timeSinceLastFire < 1);
 
-        if (full && Input.GetAxisRaw("Fire " + playerNumber) > 0 && hp > 0 && !charging && !isAI)
+        if (Input.GetAxisRaw("Fire " + playerNumber) > 0 && !isAI)
         {
-            arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
-            arrow.GetComponent<ArrowController>().owner = gameObject;
-            full = false;
-            timeSinceLastFire = 0;
-            audioSource.PlayOneShot(fireSound);
+            TryFire();
         }
         timeSinceLastFire += Time.deltaTime;
 
@@ -78,14 +69,14 @@ public class PlayerController : MonoBehaviour
         {
             case <1:
                 hp = 0;
-                Darken(true);
+                Darken();
                 break;
             case 1:
                 GetComponent<SpriteRenderer>().sprite = (full) ? heart_broken_full : heart_broken_empty;
                 break;
             case >1:
                 hp = 2;
-                Darken(false);
+                Lighten();
                 GetComponent<SpriteRenderer>().sprite = (full) ? heart_fixed_full : heart_fixed_empty;
                 if (charging && full)
                     GetComponent<SpriteRenderer>().sprite = heart_fixed_charging;
@@ -100,8 +91,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        inputVector = new Vector2(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
-        if (hp > 0 && !isAI)
+        if (!isAI)
+            inputVector = new Vector2(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
+        if (hp > 0)
             rb.MovePosition(rb.position + inputVector * speed * Time.deltaTime);
     }
 
@@ -116,21 +108,30 @@ public class PlayerController : MonoBehaviour
         { 
             if (hp == 1)
             {
-                Darken(true);
+                Darken();
                 audioSource.PlayOneShot(lowSound);
             }
             yield return new WaitForSeconds(2f/15f);
             if (hp == 1)
             {
-                Darken(false);
+                Lighten();
             }
             yield return new WaitForSeconds(6f/15f);
         }
     }
 
-    void Darken(bool darkening)
+    void Darken()
     {
-        GetComponent<SpriteRenderer>().color = (darkening) ? darkColor : color;
+        GetComponent<SpriteRenderer>().color = darkColor;
+        if (isAI)
+            AIOverlay.GetComponentInChildren<SpriteRenderer>().color = Color.grey;
+    }
+
+    void Lighten()
+    {
+        GetComponent<SpriteRenderer>().color = color;
+        if (isAI)
+            AIOverlay.GetComponentInChildren<SpriteRenderer>().color = Color.white;
     }
 
     public void Hurt()
@@ -148,5 +149,19 @@ public class PlayerController : MonoBehaviour
     public void Fill()
     {
         full = true;
+    }
+
+    public void TryFire()
+    {
+        GameObject arrow;
+
+        if (full && hp > 0 && !charging)
+        {
+            arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
+            arrow.GetComponent<ArrowController>().owner = gameObject;
+            full = false;
+            timeSinceLastFire = 0;
+            audioSource.PlayOneShot(fireSound);
+        }
     }
 }

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6833469100005161738}
   - component: {fileID: 4430618649059654998}
   - component: {fileID: 5103517274877947500}
+  - component: {fileID: -5867108082073024005}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -116,6 +117,7 @@ MonoBehaviour:
   playerNumber: 1
   color: {r: 0, g: 0, b: 0, a: 0}
   isAI: 0
+  hp: 0
 --- !u!50 &6572364289118855733
 Rigidbody2D:
   serializedVersion: 4
@@ -293,5 +295,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f82dbebb7a3f2af43aeafab84a92e494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5867108082073024005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2960453000260842326}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc58548b9abeeb45bf582b390deb82c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

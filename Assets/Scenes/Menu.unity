@@ -353,6 +353,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 2 Player Arena
       objectReference: {fileID: 0}
+    - target: {fileID: 247079288072380236, guid: 54f2ce97e16a07c409cbb482e3f8de93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6265525780828844855, guid: 54f2ce97e16a07c409cbb482e3f8de93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

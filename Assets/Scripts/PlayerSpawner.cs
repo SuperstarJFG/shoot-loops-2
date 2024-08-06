@@ -9,10 +9,9 @@ public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField][Range(0, 4)] private int playerCount;
-    //[SerializeField] private GameObject[] spawnPoints = new GameObject[4];
 
-    private List<GameObject> players = new List<GameObject>();
     private Transform spawnPoint;
+    private List<GameObject> players = new List<GameObject>();
 
     void Start()
     {
@@ -22,15 +21,19 @@ public class PlayerSpawner : MonoBehaviour
 
             if (i <= playerCount)
             {
-                spawnPlayer(spawnPoint, i, false);
+                players.Add(SpawnPlayer(spawnPoint, i, false));
             }
             else if (i <= 2)
             {
-                spawnPlayer(spawnPoint, i, true);
+                players.Add(SpawnPlayer(spawnPoint, i, true));
             }
 
             Destroy(spawnPoint.gameObject);
         }
+        if (players[0].GetComponent<PlayerController>().isAI)
+            players[0].GetComponent<AIController>().target = players[1];
+        if (players[1].GetComponent<PlayerController>().isAI)
+            players[1].GetComponent<AIController>().target = players[0];
     }
 
     void Update()
@@ -38,15 +41,17 @@ public class PlayerSpawner : MonoBehaviour
 
     }
 
-    void spawnPlayer(Transform spawnPoint, int playerNumber, bool isAI)
+    GameObject SpawnPlayer(Transform spawnPoint, int playerNumber, bool isAI)
     {
         GameObject player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
         PlayerController PC = player.GetComponent<PlayerController>();
+        AIController AIC = player.GetComponent<AIController>();
         PC.playerNumber = playerNumber;
         if (isAI)
         {
             PC.isAI = true;
-            player.AddComponent<AIController>();
+            AIC.enabled = true;
         }
+        return player;
     }
 }
