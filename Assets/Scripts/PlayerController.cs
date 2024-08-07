@@ -21,14 +21,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip fireSound;
 
-    [Range(1,4)] public int playerNumber;
-    public Color color;
-    public Vector2 inputVector;
+    public int playerNumber { get; set; }
+    public Color color { get; set; }
+    public Vector2 inputVector { get; set; }
+    private int _hp;
+    public int hp 
+    {
+        get
+        {
+            return _hp;
+        }
+        private set
+        {
+            if (value < 0)
+                value = 0;
+            else if (value > 2)
+                value = 2;
+            _hp = value;
+        }
+    }
     public bool isAI;
 
     private Rigidbody2D rb;
     private Vector2 velocityVector;
-    [Range(0,2)] private int hp;
     private bool full;
     private bool charging;
     private float timeSinceLastFire;
@@ -68,14 +83,12 @@ public class PlayerController : MonoBehaviour
         switch (hp)
         {
             case <1:
-                hp = 0;
                 Darken();
                 break;
             case 1:
                 GetComponent<SpriteRenderer>().sprite = (full) ? heart_broken_full : heart_broken_empty;
                 break;
             case >1:
-                hp = 2;
                 Lighten();
                 GetComponent<SpriteRenderer>().sprite = (full) ? heart_fixed_full : heart_fixed_empty;
                 if (charging && full)

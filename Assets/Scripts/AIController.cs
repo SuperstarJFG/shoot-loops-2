@@ -19,6 +19,10 @@ public class AIController : MonoBehaviour
     void Update()
     {
         PC.TryFire();
+        //if (PC.hp < 2)
+        //{
+        //    target = PC.arrow;
+        //}
     }
 
     void FixedUpdate()
