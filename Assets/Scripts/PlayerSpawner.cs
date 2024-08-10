@@ -31,9 +31,9 @@ public class PlayerSpawner : MonoBehaviour
             Destroy(spawnPoint.gameObject);
         }
         if (players[0].GetComponent<PlayerController>().isAI)
-            players[0].GetComponent<AIController>().target = players[1];
+            players[0].GetComponent<AIController>().enemy = players[1];
         if (players[1].GetComponent<PlayerController>().isAI)
-            players[1].GetComponent<AIController>().target = players[0];
+            players[1].GetComponent<AIController>().enemy = players[0];
     }
 
     void Update()

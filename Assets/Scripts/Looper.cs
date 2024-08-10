@@ -16,6 +16,7 @@ public class Looper : MonoBehaviour
     void FixedUpdate()
     {
         newPosition = transform.position;
+
         if (transform.position.y > verticalBound)
             newPosition.y = -verticalBound + 0.01f;
         if (transform.position.y < -verticalBound)
@@ -24,6 +25,7 @@ public class Looper : MonoBehaviour
             newPosition.x = -horizontalBound + 0.01f;
         if (transform.position.x < -horizontalBound)
             newPosition.x = horizontalBound - 0.01f;
+
         transform.position = newPosition;
     }
 }
