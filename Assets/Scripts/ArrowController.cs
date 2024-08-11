@@ -48,8 +48,8 @@ public class ArrowController : MonoBehaviour
             else
             {
                 collision.GetComponent<PlayerController>().Hurt();
-                ownerPC.Fill();
-                Destroy(gameObject);
+                //ownerPC.Fill();
+                //Destroy(gameObject);
             }
         }
     }

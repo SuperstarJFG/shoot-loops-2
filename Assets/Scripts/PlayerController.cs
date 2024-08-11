@@ -24,29 +24,25 @@ public class PlayerController : MonoBehaviour
     public int playerNumber { get; set; }
     public Color color { get; private set; }
     public Vector3 inputVector { get; set; }
-    private int _hp;
-    public int hp 
+    private int _HP;
+    public int HP 
     {
-        get
-        {
-            return _hp;
-        }
+        get { return _HP; }
         private set
         {
-            if (value < 0)
-                value = 0;
-            else if (value > 2)
-                value = 2;
-            _hp = value;
+            if (value < 0 || value > 2)
+                return;
+            _HP = value;
         }
     }
     public GameObject arrow { get; private set; }
     public bool isAI;
     public bool isFull { get; private set; }
 
-    private Rigidbody2D rb;
-    private bool isCharging;
-    private float timeSinceLastFire;
+    private Rigidbody2D RB;
+    //private bool isCharging;
+    //private float timeSinceLastFire;
+    private float timeSinceLastHurt;
     private AudioSource audioSource;
     private Color darkColor
     {
@@ -60,15 +56,15 @@ public class PlayerController : MonoBehaviour
     
     void Start()
     {
-        color = new Color(UnityEngine.Random.Range(.1f, 1f), UnityEngine.Random.Range(.1f, 1f), UnityEngine.Random.Range(.1f, 1f));
+        color = new Color(UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f));
         GetComponent<SpriteRenderer>().color = color;
 
         name = "Player " + playerNumber;
-        rb = GetComponent<Rigidbody2D>();
+        RB = GetComponent<Rigidbody2D>();
         isFull = true;
-        hp = 2;
+        HP = 2;
         audioSource = GetComponent<AudioSource>();
-        StartCoroutine(LowHP());
+        StartCoroutine(DoLowHPEfects());
 
         if (isAI)
             AIOverlay = Instantiate(AIOverlayPrefab, transform);
@@ -76,27 +72,30 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        isCharging = (timeSinceLastFire < 1);
+        //isCharging = (timeSinceLastFire < 1);
 
         if (Input.GetAxisRaw("Fire " + playerNumber) > 0 && !isAI)
         {
             TryFire();
         }
-        timeSinceLastFire += Time.deltaTime;
+        //timeSinceLastFire += Time.deltaTime;
+        timeSinceLastHurt += Time.deltaTime;
 
-        switch (hp)
+        switch (HP)
         {
-            case <1:
+            case 0:
                 Darken();
+                Destroy(arrow);
+                //Time.timeScale = 0f;
                 break;
             case 1:
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_broken_full : heart_broken_empty;
                 break;
-            case >1:
+            case 2:
                 Lighten();
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_fixed_full : heart_fixed_empty;
-                if (isCharging && isFull)
-                    GetComponent<SpriteRenderer>().sprite = heart_fixed_charging;
+                //if (isFull && isCharging)
+                //    GetComponent<SpriteRenderer>().sprite = heart_fixed_charging;
                 break;
         }
 
@@ -110,8 +109,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!isAI)
             inputVector = new Vector3(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
-        if (hp > 0)
-            rb.MovePosition((Vector3) rb.position + inputVector * speed * Time.deltaTime);
+        if (HP > 0)
+            RB.MovePosition((Vector3) RB.position + inputVector * speed * Time.deltaTime);
     }
 
     void Restart()
@@ -119,17 +118,17 @@ public class PlayerController : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
-    IEnumerator LowHP()
+    IEnumerator DoLowHPEfects()
     {
         while (true)
         { 
-            if (hp == 1)
+            if (HP == 1)
             {
                 Darken();
                 audioSource.PlayOneShot(lowSound);
             }
             yield return new WaitForSeconds(2f/15f);
-            if (hp == 1)
+            if (HP == 1)
             {
                 Lighten();
             }
@@ -153,13 +152,17 @@ public class PlayerController : MonoBehaviour
 
     public void Hurt()
     {
-        hp--;
-        audioSource.PlayOneShot(hurtSound);
+        if (timeSinceLastHurt > 0.5f)
+        {
+            HP--;
+            audioSource.PlayOneShot(hurtSound);
+            timeSinceLastHurt = 0f;
+        }
     }
 
     public void Heal()
     {
-        hp++;
+        HP++;
         audioSource.PlayOneShot(healSound);
     }
 
@@ -170,12 +173,12 @@ public class PlayerController : MonoBehaviour
 
     public void TryFire()
     {
-        if (isFull && hp > 0 && !isCharging)
+        if (isFull && HP > 0)
         {
             arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
             arrow.GetComponent<ArrowController>().owner = gameObject;
             isFull = false;
-            timeSinceLastFire = 0;
+            //timeSinceLastFire = 0;
             audioSource.PlayOneShot(fireSound);
         }
     }

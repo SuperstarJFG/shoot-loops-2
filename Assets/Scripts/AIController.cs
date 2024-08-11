@@ -1,25 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AIController : MonoBehaviour
 {
-    public GameObject enemy { get; set; }
+    public GameObject enemy { private get; set; }
 
-    private Vector3 targetVector;
-    //private GameObject targetObject
-    //{
-    //    set
-    //    {
-    //        targetVector = value.transform.position + transform.up * 5;
-    //    }
-    //}
-    private float distanceToTarget
+    private Vector3 positionOfEnemy { get { return enemy.transform.position; } }
+    private Vector3 positionOfEnemyArrow
     {
         get
         {
-            return Vector3.Distance(targetVector, transform.position);
+            if (enemy.GetComponent<PlayerController>().arrow == null)
+                return Vector3.positiveInfinity;
+            else
+                return enemy.GetComponent<PlayerController>().arrow.transform.position;
+        }
+    }
+    private Vector3 positionInFrontOfEnemyArrow;
+    private Vector3 targetVector;
+    private GameObject targetObject
+    {
+        set
+        {
+            if (value != null)
+                targetVector = value.transform.position;
         }
     }
     private enum State
@@ -28,7 +36,7 @@ public class AIController : MonoBehaviour
         dodging,
         lowHP,
         targeting,
-        firing
+        movingRandomly
     }
     private State _state;
     private State state
@@ -36,56 +44,68 @@ public class AIController : MonoBehaviour
         get { return _state; }
         set
         {
-            StartCoroutine(ChangeStateAfterWaitingSeconds(value, 1.0f));
+            if (value == _state)
+                return;
+            Debug.Log("changing state to " + value);
+            StartCoroutine(ChangeStateAfterSeconds(value, RNG(0.0f, 0.0f)));
         }
 
-    }    
-    private Vector3 positionInFrontOfEnemyArrow;
+    }
+    private bool isWaitingToFire;
     private PlayerController PC;
+    private Color debugLineColor;
 
     void Start()
     {
         PC = GetComponent<PlayerController>();
+        Time.timeScale = 1.0f;
     }
 
     void Update()
-    {        
+    {
+        if (RNG(0,1) < 0.001f)
+            StartCoroutine(MoveRandomly());
+        if (state == State.movingRandomly)
+            return;
+
         // check if low hp
-        if (PC.hp == 1)
+        if (PC.HP == 1)
             state = State.lowHP;
 
         // dodge if needed
-        positionInFrontOfEnemyArrow = Vector3.positiveInfinity;
-        if (enemy.GetComponent<PlayerController>().arrow != null)
-            positionInFrontOfEnemyArrow = enemy.GetComponent<PlayerController>().arrow.transform.position + transform.up * 5;
-        if (Vector3.Distance(positionInFrontOfEnemyArrow, transform.position) < 2f)
+        positionInFrontOfEnemyArrow = positionOfEnemyArrow + transform.up * 2;
+        if (Vector3.Distance(positionInFrontOfEnemyArrow, transform.position) < 2.0f)
             state = State.dodging;
-        else if (PC.hp == 2)
+        else if (PC.HP == 2)
             state = State.targeting;
         // start targeting if full hp and not dodging
 
         switch (state)
         {
             case State.idle:
-                targetVector = transform.position;
+                targetObject = gameObject;
                 break;
             case State.dodging:
-                targetVector = transform.position + (transform.up + transform.right) * 5;
-                PC.TryFire();
+                targetVector = transform.position + transform.right*RNG(0,1) + transform.up*RNG(0,1);
+                debugLineColor = Color.yellow;
                 break;
             case State.lowHP:
                 if (PC.isFull)
-                    PC.TryFire();
+                    TryFire();
                 else
-                    targetVector = PC.arrow.transform.position;
+                    targetObject = PC.arrow;
+                debugLineColor = Color.blue;
                 break;
             case State.targeting:
                 if (PC.isFull)
+                {
                     targetVector = enemy.transform.position + transform.up * 5;
+                    if (Vector3.Distance(targetVector, transform.position) < 0.5f)
+                        TryFire();
+                }
                 else
-                    targetVector = PC.arrow.transform.position;
-                if (distanceToTarget < 0.5f)
-                    PC.TryFire();
+                    targetObject = PC.arrow;
+                debugLineColor = Color.red;
                 break;
             default:
                 break;
@@ -93,11 +113,11 @@ public class AIController : MonoBehaviour
 
         Follow(targetVector);
 
-        Debug.DrawLine(transform.position, targetVector, Color.red);
+        Debug.DrawLine(transform.position, targetVector, debugLineColor);
         //Debug.Log("targetVector " + targetVector);
         Debug.DrawLine(transform.position, positionInFrontOfEnemyArrow, Color.green);
         //Debug.Log("positionInFrontOfEnemyArrow " + positionInFrontOfEnemyArrow);
-        Debug.Log("state " + state);
+        //Debug.Log("state " + state);
 
     }
 
@@ -110,7 +130,7 @@ public class AIController : MonoBehaviour
     {
         Vector3 direction = target - transform.position;
         float distance = Vector3.Distance(target, transform.position);
-        if (distance > 0.1f)
+        if (distance > 0.3f)
         {
             PC.inputVector = Vector3Int.RoundToInt(direction.normalized);
         }
@@ -119,9 +139,35 @@ public class AIController : MonoBehaviour
         }
     }
 
-    IEnumerator ChangeStateAfterWaitingSeconds(State state, float seconds)
+    IEnumerator ChangeStateAfterSeconds(State state, float seconds)
     {
         yield return new WaitForSeconds(seconds);
         _state = state;
+    }
+    IEnumerator TryFireAfterSeconds(float seconds)
+    {
+        isWaitingToFire = true;
+        Debug.Log("waiting seconds " + seconds);
+        yield return new WaitForSeconds(seconds);
+        Debug.Log("firing");
+        PC.TryFire();
+        isWaitingToFire = false;
+    }
+    void TryFire()
+    {
+        if (!isWaitingToFire)
+            StartCoroutine(TryFireAfterSeconds(RNG(0, 0.5f)));
+    }
+
+    float RNG(float minInclusive, float maxInclusive)
+    {
+        return UnityEngine.Random.Range(minInclusive, maxInclusive);
+    }
+    IEnumerator MoveRandomly()
+    {
+        state = State.movingRandomly;
+        Follow(math.INFINITY * new Vector3(RNG(-1, 1), RNG(-1, 1)));
+        yield return new WaitForSeconds(RNG(0, 1));
+        state = State.idle;
     }
 }
