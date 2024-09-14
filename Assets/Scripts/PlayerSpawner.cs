@@ -8,7 +8,8 @@ using UnityEngine.UIElements;
 public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField][Range(0, 4)] private int playerCount;
+    [SerializeField][Range(0, 4)] private int humanPlayerCount;
+    [SerializeField][Range(1, 9)] private int AIDifficulty;
 
     private Transform spawnPoint;
     private List<GameObject> players = new List<GameObject>();
@@ -19,7 +20,7 @@ public class PlayerSpawner : MonoBehaviour
         {
             spawnPoint = transform.GetChild(i - 1);
 
-            if (i <= playerCount)
+            if (i <= humanPlayerCount)
             {
                 players.Add(SpawnPlayer(spawnPoint, i, false));
             }
@@ -51,6 +52,7 @@ public class PlayerSpawner : MonoBehaviour
         {
             PC.isAI = true;
             AIC.enabled = true;
+            AIC.difficulty = AIDifficulty;
         }
         return player;
     }

@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 public class AIController : MonoBehaviour
 {
     public GameObject enemy { private get; set; }
+    public int difficulty { private get; set; }
 
     private Vector3 positionOfEnemy { get { return enemy.transform.position; } }
     private Vector3 positionOfEnemyArrow
@@ -58,13 +59,15 @@ public class AIController : MonoBehaviour
     void Start()
     {
         PC = GetComponent<PlayerController>();
-        Time.timeScale = 1.0f;
     }
 
     void Update()
     {
         if (RNG(0,1) < 0.001f)
+        {
+            state = State.movingRandomly;
             StartCoroutine(MoveRandomly());
+        }
         if (state == State.movingRandomly)
             return;
 
@@ -74,7 +77,7 @@ public class AIController : MonoBehaviour
 
         // dodge if needed
         positionInFrontOfEnemyArrow = positionOfEnemyArrow + transform.up * 2;
-        if (Vector3.Distance(positionInFrontOfEnemyArrow, transform.position) < 2.0f)
+        if (Vector3.Distance(positionInFrontOfEnemyArrow, transform.position) < (3 + difficulty/5f))
             state = State.dodging;
         else if (PC.HP == 2)
             state = State.targeting;
@@ -99,7 +102,8 @@ public class AIController : MonoBehaviour
             case State.targeting:
                 if (PC.isFull)
                 {
-                    targetVector = enemy.transform.position + transform.up * 5;
+                    Debug.Log("targeting and full. difficulty " + difficulty);
+                    targetVector = positionOfEnemy + transform.up * (1 + (5f/difficulty));
                     if (Vector3.Distance(targetVector, transform.position) < 0.5f)
                         TryFire();
                 }
@@ -129,13 +133,13 @@ public class AIController : MonoBehaviour
     void Follow(Vector3 target)
     {
         Vector3 direction = target - transform.position;
-        float distance = Vector3.Distance(target, transform.position);
-        if (distance > 0.3f)
+        if (Vector3.Distance(target, transform.position) > 0.3f)
         {
             PC.inputVector = Vector3Int.RoundToInt(direction.normalized);
         }
         else {
             PC.inputVector = Vector3.zero;
+            //Debug.Log("reached target");
         }
     }
 
@@ -156,7 +160,7 @@ public class AIController : MonoBehaviour
     void TryFire()
     {
         if (!isWaitingToFire)
-            StartCoroutine(TryFireAfterSeconds(RNG(0, 0.5f)));
+            StartCoroutine(TryFireAfterSeconds(RNG(0, 1f/difficulty)));
     }
 
     float RNG(float minInclusive, float maxInclusive)
@@ -165,9 +169,10 @@ public class AIController : MonoBehaviour
     }
     IEnumerator MoveRandomly()
     {
-        state = State.movingRandomly;
-        Follow(math.INFINITY * new Vector3(RNG(-1, 1), RNG(-1, 1)));
-        yield return new WaitForSeconds(RNG(0, 1));
+        if (difficulty > RNG(1, 10))
+            TryFire();
+        Follow(100 * new Vector3(RNG(-1, 1), RNG(-1, 1)));
+        yield return new WaitForSeconds(3);//RNG(0, 1));
         state = State.idle;
     }
 }

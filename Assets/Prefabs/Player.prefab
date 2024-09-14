@@ -105,6 +105,7 @@ MonoBehaviour:
   speed: 10
   arrowPrefab: {fileID: 9104474662989181194, guid: 93527d8880f8b24459d2ad3537fa1d46, type: 3}
   AIOverlayPrefab: {fileID: 7748088757334809055, guid: d9dafa71a87238b4fb677d714f3366ef, type: 3}
+  glowPrefab: {fileID: 2845831552694871604, guid: 34f9409138914794bbd9fcbc5ce1bbe0, type: 3}
   heart_broken_empty: {fileID: 21300000, guid: c31ab5e6684dc9c48819dca6814814ec, type: 3}
   heart_broken_full: {fileID: 21300000, guid: 7e7c8cb1f68a9794d8eeb51da620ca00, type: 3}
   heart_fixed_empty: {fileID: 21300000, guid: b2b24a2fbc83be4448446e8d63935ae9, type: 3}
@@ -114,10 +115,7 @@ MonoBehaviour:
   healSound: {fileID: 8300000, guid: d66ad8c70b0542a41acefacaf8dc27b1, type: 3}
   hurtSound: {fileID: 8300000, guid: 101fadc34ad71e54fb79ae4a4e422cb5, type: 3}
   fireSound: {fileID: 8300000, guid: dca3592edefdf8f4e9923369725f02dd, type: 3}
-  playerNumber: 1
-  color: {r: 0, g: 0, b: 0, a: 0}
   isAI: 0
-  hp: 0
 --- !u!50 &6572364289118855733
 Rigidbody2D:
   serializedVersion: 4

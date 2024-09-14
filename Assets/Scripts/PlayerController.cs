@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private GameObject AIOverlayPrefab;
+    [SerializeField] private GameObject glowPrefab;
+    [SerializeField] private GameObject bigGlowPrefab;
     [SerializeField] private Sprite heart_broken_empty;
     [SerializeField] private Sprite heart_broken_full;
     [SerializeField] private Sprite heart_fixed_empty;
@@ -23,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     public int playerNumber { get; set; }
     public Color color { get; private set; }
-    public Vector3 inputVector { get; set; }
+    public Vector3 inputVector { private get; set; }
     private int _HP;
     public int HP 
     {
@@ -51,8 +53,8 @@ public class PlayerController : MonoBehaviour
             return new Color(color.r, color.g, color.b, 0.1f);
         }
     }
-    private AIController AIController;
     private GameObject AIOverlay;
+    private GameObject glow;
     
     void Start()
     {
@@ -68,6 +70,8 @@ public class PlayerController : MonoBehaviour
 
         if (isAI)
             AIOverlay = Instantiate(AIOverlayPrefab, transform);
+        glow = Instantiate(glowPrefab, transform);
+        glow.GetComponent<SpriteRenderer>().color = color;
     }
 
     void Update()
@@ -90,10 +94,12 @@ public class PlayerController : MonoBehaviour
                 break;
             case 1:
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_broken_full : heart_broken_empty;
+                glow.SetActive(false);
                 break;
             case 2:
                 Lighten();
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_fixed_full : heart_fixed_empty;
+                glow.SetActive(true);
                 //if (isFull && isCharging)
                 //    GetComponent<SpriteRenderer>().sprite = heart_fixed_charging;
                 break;
@@ -103,6 +109,8 @@ public class PlayerController : MonoBehaviour
         {
             Restart();
         }
+
+        Debug.DrawLine(transform.position, transform.position + inputVector, Color.white);
     }
 
     void FixedUpdate()
