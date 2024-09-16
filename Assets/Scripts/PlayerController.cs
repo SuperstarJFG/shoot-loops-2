@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip fireSound;
 
-    public int playerNumber { get; set; }
+    public int playerNumber;
     public Color color { get; private set; }
     public Vector3 inputVector { private get; set; }
     private int _HP;
@@ -32,9 +32,8 @@ public class PlayerController : MonoBehaviour
         get { return _HP; }
         private set
         {
-            if (value < 0 || value > 2)
-                return;
-            _HP = value;
+            if (value >= 0 && value <= 2)
+                _HP = value;
         }
     }
     public GameObject arrow { get; private set; }
@@ -42,8 +41,6 @@ public class PlayerController : MonoBehaviour
     public bool isFull { get; private set; }
 
     private Rigidbody2D RB;
-    //private bool isCharging;
-    //private float timeSinceLastFire;
     private float timeSinceLastHurt;
     private AudioSource audioSource;
     private Color darkColor
@@ -76,13 +73,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //isCharging = (timeSinceLastFire < 1);
 
         if (Input.GetAxisRaw("Fire " + playerNumber) > 0 && !isAI)
         {
             TryFire();
         }
-        //timeSinceLastFire += Time.deltaTime;
         timeSinceLastHurt += Time.deltaTime;
 
         switch (HP)
@@ -90,7 +85,6 @@ public class PlayerController : MonoBehaviour
             case 0:
                 Darken();
                 Destroy(arrow);
-                //Time.timeScale = 0f;
                 break;
             case 1:
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_broken_full : heart_broken_empty;
@@ -100,8 +94,6 @@ public class PlayerController : MonoBehaviour
                 Lighten();
                 GetComponent<SpriteRenderer>().sprite = (isFull) ? heart_fixed_full : heart_fixed_empty;
                 glow.SetActive(true);
-                //if (isFull && isCharging)
-                //    GetComponent<SpriteRenderer>().sprite = heart_fixed_charging;
                 break;
         }
 
@@ -186,7 +178,6 @@ public class PlayerController : MonoBehaviour
             arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
             arrow.GetComponent<ArrowController>().owner = gameObject;
             isFull = false;
-            //timeSinceLastFire = 0;
             audioSource.PlayOneShot(fireSound);
         }
     }

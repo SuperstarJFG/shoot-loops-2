@@ -769,7 +769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 2960453000260842326, guid: 902da12220365c942a505c3f3b380f01, type: 3}
-  playerCount: 1
+  humanPlayerCount: 1
   AIDifficulty: 4
 --- !u!4 &1915281189
 Transform:
