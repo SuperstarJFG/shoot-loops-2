@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Rendering;
 using UnityEditor.SceneManagement;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip healSound;
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip fireSound;
+    [SerializeField] private GameObject controlsOverlayPrefab;
 
     public int playerNumber;
     public Color color { get; private set; }
@@ -42,6 +44,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D RB;
     private float timeSinceLastHurt;
+    private float timeAlive;
     private AudioSource audioSource;
     private Color darkColor
     {
@@ -57,6 +60,12 @@ public class PlayerController : MonoBehaviour
     {
         color = new Color(UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f));
         GetComponent<SpriteRenderer>().color = color;
+        if (isAI)
+            AIOverlay = Instantiate(AIOverlayPrefab, transform);
+        else
+            Instantiate(controlsOverlayPrefab, transform);
+        glow = Instantiate(glowPrefab, transform);
+        glow.GetComponent<SpriteRenderer>().color = color;
 
         name = "Player " + playerNumber;
         RB = GetComponent<Rigidbody2D>();
@@ -65,10 +74,6 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         StartCoroutine(DoLowHPEfects());
 
-        if (isAI)
-            AIOverlay = Instantiate(AIOverlayPrefab, transform);
-        glow = Instantiate(glowPrefab, transform);
-        glow.GetComponent<SpriteRenderer>().color = color;
     }
 
     void Update()
@@ -79,6 +84,7 @@ public class PlayerController : MonoBehaviour
             TryFire();
         }
         timeSinceLastHurt += Time.deltaTime;
+        timeAlive += Time.deltaTime;
 
         switch (HP)
         {
