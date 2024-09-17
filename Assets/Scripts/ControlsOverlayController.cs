@@ -32,12 +32,12 @@ public class ControlsOverlayController : MonoBehaviour
 
     void Update()
     {
+        if (!PC.isHowToPlay && PC.secondsAlive > 3f)
+            Destroy(gameObject);
+
         if (PC.isFull)
             shootText.text = inputStrings[playerNumber - 1, 4];
         else
             shootText.text = "";
-
-        if (!PC.isHowToPlay || PC.secondsAlive > 3f)
-            Destroy(gameObject);
     }
 }

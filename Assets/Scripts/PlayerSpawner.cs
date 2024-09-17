@@ -13,7 +13,7 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Slider humanPlayerCountSlider;
     [SerializeField] private Slider AIDifficultySlider;
-    [SerializeField] private TextMeshProUGUI countdownText;
+    [SerializeField] private GameObject countdownPrefab;
 
     [Range(0, 4)] private int humanPlayerCount;
     [Range(1, 9)] private int AIDifficulty;
@@ -27,7 +27,6 @@ public class PlayerSpawner : MonoBehaviour
     }
     private Scene scene;
     private AudioSource audioSource;
-    private float countdown;
 
     void Start()
     {
@@ -52,24 +51,10 @@ public class PlayerSpawner : MonoBehaviour
     {
         if (AIDifficultySlider == null)
             return;
-        if (humanPlayerCountSlider.value < 2f && scene == Scene.play)
+        if (humanPlayerCountSlider.value <= 1f && scene == Scene.play)
             AIDifficultySlider.gameObject.SetActive(true);
         else
             AIDifficultySlider.gameObject.SetActive(false);
-
-        countdown -= Time.deltaTime;
-        switch (countdown)
-        {
-            case > 0f:
-                countdownText.text = countdown.ToString("0.0");
-                break;
-            case > -1f:
-                countdownText.text = "GO";
-                break;
-            default:
-                countdownText.text = "";
-                break;
-        }
     }
 
     public void SpawnPlayers()
@@ -83,7 +68,8 @@ public class PlayerSpawner : MonoBehaviour
         { 
             humanPlayerCount = (int) humanPlayerCountSlider.value;
             AIDifficulty = (int) AIDifficultySlider.value;
-            countdown = 3f;
+
+            Instantiate(countdownPrefab);
         }
 
         if (scene == Scene.howToPlay)
@@ -117,10 +103,8 @@ public class PlayerSpawner : MonoBehaviour
 
         audioSource.Play();
 
-
         foreach (Transform child in transform)
             child.gameObject.SetActive(false);
-        countdownText.gameObject.SetActive(true);
     }
 
     void SpawnPlayer(int playerNumber, bool isAI)
@@ -137,7 +121,7 @@ public class PlayerSpawner : MonoBehaviour
             AIC.enabled = true;
             AIC.difficulty = AIDifficulty;
         }
-        PC.isHowToPlay = scene == Scene.howToPlay;
+        PC.isHowToPlay = (scene == Scene.howToPlay);
 
         players.Add(player);
     }

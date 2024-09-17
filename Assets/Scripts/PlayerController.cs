@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
         GetComponent<SpriteRenderer>().color = color;
         if (isAI)
             AIOverlay = Instantiate(AIOverlayPrefab, transform);
-        if (isHowToPlay)
+        else
             Instantiate(controlsOverlayPrefab, transform);
         glow = Instantiate(glowPrefab, transform);
         glow.GetComponent<SpriteRenderer>().color = color;
