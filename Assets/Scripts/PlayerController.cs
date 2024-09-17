@@ -34,17 +34,27 @@ public class PlayerController : MonoBehaviour
         get { return _HP; }
         private set
         {
-            if (value >= 0 && value <= 2)
-                _HP = value;
+            Debug.Log(value + " " + isHowToPlay);
+            if (isHowToPlay)
+            { 
+                if (value >= 1 && value <= 2)
+                    _HP = value;
+            }
+            else
+            {
+                if (value >= 0 && value <= 2)
+                    _HP = value;
+            }
         }
     }
     public GameObject arrow { get; private set; }
     public bool isAI;
     public bool isFull { get; private set; }
+    public bool isHowToPlay;
+    public float secondsAlive { get; private set; }
 
     private Rigidbody2D RB;
-    private float timeSinceLastHurt;
-    private float timeAlive;
+    private float secondsSinceLastHurt;
     private AudioSource audioSource;
     private Color darkColor
     {
@@ -62,7 +72,7 @@ public class PlayerController : MonoBehaviour
         GetComponent<SpriteRenderer>().color = color;
         if (isAI)
             AIOverlay = Instantiate(AIOverlayPrefab, transform);
-        else
+        if (isHowToPlay)
             Instantiate(controlsOverlayPrefab, transform);
         glow = Instantiate(glowPrefab, transform);
         glow.GetComponent<SpriteRenderer>().color = color;
@@ -73,19 +83,10 @@ public class PlayerController : MonoBehaviour
         HP = 2;
         audioSource = GetComponent<AudioSource>();
         StartCoroutine(DoLowHPEfects());
-
     }
 
     void Update()
     {
-
-        if (Input.GetAxisRaw("Fire " + playerNumber) > 0 && !isAI)
-        {
-            TryFire();
-        }
-        timeSinceLastHurt += Time.deltaTime;
-        timeAlive += Time.deltaTime;
-
         switch (HP)
         {
             case 0:
@@ -103,9 +104,17 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        if (Input.GetAxisRaw("R") > 0 && Input.GetAxisRaw("Left Shift") > 0)
+        secondsSinceLastHurt += Time.deltaTime;
+        secondsAlive += Time.deltaTime;
+
+        if (secondsAlive < 3f)
         {
-            Restart();
+            return;
+        }
+
+        if (Input.GetAxisRaw("Fire " + playerNumber) > 0 && !isAI)
+        {
+            TryFire();
         }
 
         Debug.DrawLine(transform.position, transform.position + inputVector, Color.white);
@@ -113,15 +122,15 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (secondsAlive < 3f)
+        {
+            return;
+        }
+
         if (!isAI)
             inputVector = new Vector3(Input.GetAxisRaw("Horizontal " + playerNumber), Input.GetAxisRaw("Vertical " + playerNumber));
         if (HP > 0)
             RB.MovePosition((Vector3) RB.position + inputVector * speed * Time.deltaTime);
-    }
-
-    void Restart()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     IEnumerator DoLowHPEfects()
@@ -158,11 +167,11 @@ public class PlayerController : MonoBehaviour
 
     public void Hurt()
     {
-        if (timeSinceLastHurt > 0.5f)
+        if (secondsSinceLastHurt > 0.5f)
         {
             HP--;
             audioSource.PlayOneShot(hurtSound);
-            timeSinceLastHurt = 0f;
+            secondsSinceLastHurt = 0f;
         }
     }
 
@@ -179,7 +188,7 @@ public class PlayerController : MonoBehaviour
 
     public void TryFire()
     {
-        if (isFull && HP > 0)
+        if (isFull && HP > 0 && secondsAlive > 3f)
         {
             arrow = Instantiate(arrowPrefab, transform.position, transform.rotation);
             arrow.GetComponent<ArrowController>().owner = gameObject;

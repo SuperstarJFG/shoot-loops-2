@@ -9,19 +9,21 @@ public class ControlsOverlayController : MonoBehaviour
     [SerializeField] private TextMeshPro shootText;
 
     private int playerNumber;
-
     private string[,] inputStrings = { 
         { "↑", "←", "↓", "→", "RSHIFT" },
         { "W", "A", "S", "D", "TAB" },
         { "I", "J", "K", "L", "Y" },
         { "8", "4", "5", "6", "\\" }
     };
+    private PlayerController PC;
 
     void Start()
     {
+        PC = GetComponentInParent<PlayerController>();
+
         transform.rotation = Quaternion.Euler(0, 0, 0);
         
-        playerNumber = GetComponentInParent<PlayerController>().playerNumber;
+        playerNumber = PC.playerNumber;
         moveText.text = 
             inputStrings[playerNumber - 1, 0] + "\n" 
             + inputStrings[playerNumber - 1, 1] + "     " + inputStrings[playerNumber - 1, 3] + "\n" 
@@ -30,9 +32,12 @@ public class ControlsOverlayController : MonoBehaviour
 
     void Update()
     {
-        if (GetComponentInParent<PlayerController>().isFull)
+        if (PC.isFull)
             shootText.text = inputStrings[playerNumber - 1, 4];
         else
             shootText.text = "";
+
+        if (!PC.isHowToPlay || PC.secondsAlive > 3f)
+            Destroy(gameObject);
     }
 }

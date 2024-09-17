@@ -63,6 +63,13 @@ public class AIController : MonoBehaviour
 
     void Update()
     {
+        if (enemy.GetComponent<PlayerController>().HP <= 0)
+        {
+            targetObject = PC.arrow;
+            Follow(targetVector);
+            return;
+        }
+
         if (RNG(0,1) < 0.001f)
         {
             state = State.movingRandomly;
