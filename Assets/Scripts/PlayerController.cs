@@ -6,6 +6,7 @@ using UnityEditor.Rendering;
 using UnityEditor.SceneManagement;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -70,8 +71,11 @@ public class PlayerController : MonoBehaviour
     {
         color = new Color(UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f), UnityEngine.Random.Range(0.2f, 1f));
         GetComponent<SpriteRenderer>().color = color;
-        if (isAI)
+        if (isAI) { 
             AIOverlay = Instantiate(AIOverlayPrefab, transform);
+            if (SceneManager.GetActiveScene().name == "MainMenu")
+                AIOverlay.SetActive(false);
+        }
         else
             Instantiate(controlsOverlayPrefab, transform);
         glow = Instantiate(glowPrefab, transform);

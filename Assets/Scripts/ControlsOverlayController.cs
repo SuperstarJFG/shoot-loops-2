@@ -7,6 +7,7 @@ public class ControlsOverlayController : MonoBehaviour
 {
     [SerializeField] private TextMeshPro moveText;
     [SerializeField] private TextMeshPro shootText;
+    [SerializeField] private TextMeshPro playerNumberText;
 
     private int playerNumber;
     private string[,] inputStrings = { 
@@ -28,6 +29,8 @@ public class ControlsOverlayController : MonoBehaviour
             inputStrings[playerNumber - 1, 0] + "\n" 
             + inputStrings[playerNumber - 1, 1] + "     " + inputStrings[playerNumber - 1, 3] + "\n" 
             + inputStrings[playerNumber - 1, 2];
+
+        playerNumberText.text = "P" + playerNumber.ToString();
     }
 
     void Update()

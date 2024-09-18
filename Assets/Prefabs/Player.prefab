@@ -78,7 +78,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 709f7929e4585e146af6ef51e14df922, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -119,6 +119,7 @@ MonoBehaviour:
   controlsOverlayPrefab: {fileID: 6975676161043833620, guid: 0fa768b260cf4ae4e91a779c062d2f69, type: 3}
   playerNumber: 0
   isAI: 0
+  isHowToPlay: 0
 --- !u!50 &6572364289118855733
 Rigidbody2D:
   serializedVersion: 4
