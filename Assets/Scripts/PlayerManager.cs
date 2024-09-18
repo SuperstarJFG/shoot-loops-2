@@ -8,17 +8,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerSpawner : MonoBehaviour
+public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Slider humanPlayerCountSlider;
     [SerializeField] private Slider AIDifficultySlider;
     [SerializeField] private GameObject countdownPrefab;
+    [SerializeField] private GameObject gameOverTextPrefab;
+    [SerializeField] private GameObject menuManager;
 
     [Range(0, 4)] private int humanPlayerCount;
     [Range(1, 9)] private int AIDifficulty;
-    
     private List<GameObject> players = new();
+    private HashSet<GameObject> livingPlayers = new();
     private enum Scene
     {
         mainMenu,
@@ -27,6 +29,7 @@ public class PlayerSpawner : MonoBehaviour
     }
     private Scene scene;
     private AudioSource audioSource;
+    private float secondsSinceGameOver;
 
     void Start()
     {
@@ -49,12 +52,9 @@ public class PlayerSpawner : MonoBehaviour
 
     void Update()
     {
-        if (AIDifficultySlider == null)
-            return;
-        if (humanPlayerCountSlider.value <= 1f && scene == Scene.play)
-            AIDifficultySlider.gameObject.SetActive(true);
-        else
-            AIDifficultySlider.gameObject.SetActive(false);
+        ManageAISlider();
+        if (scene == Scene.play)
+            ManageGameOver();
     }
 
     public void SpawnPlayers()
@@ -69,11 +69,13 @@ public class PlayerSpawner : MonoBehaviour
             humanPlayerCount = (int) humanPlayerCountSlider.value;
             AIDifficulty = (int) AIDifficultySlider.value;
 
+            audioSource.Play();
             Instantiate(countdownPrefab);
         }
 
         if (scene == Scene.howToPlay)
         {
+            menuManager.GetComponent<MenuController>().EnableQuitAndRestartButtons();
             for (int i = 1; i < humanPlayerCount + 1; i++)
                 SpawnPlayer(i, false);
         }
@@ -101,10 +103,7 @@ public class PlayerSpawner : MonoBehaviour
                 players[1].GetComponent<AIController>().enemy = players[0];
         }
 
-        audioSource.Play();
-
-        foreach (Transform child in transform)
-            child.gameObject.SetActive(false);
+        GetComponentInChildren<Canvas>().gameObject.SetActive(false);
     }
 
     void SpawnPlayer(int playerNumber, bool isAI)
@@ -124,5 +123,59 @@ public class PlayerSpawner : MonoBehaviour
         PC.isHowToPlay = (scene == Scene.howToPlay);
 
         players.Add(player);
+    }
+
+    void ManageAISlider()
+    {
+        if (AIDifficultySlider == null)
+            return;
+        if (humanPlayerCountSlider.value <= 1f && scene == Scene.play)
+            AIDifficultySlider.gameObject.SetActive(true);
+        else
+            AIDifficultySlider.gameObject.SetActive(false);
+    }
+
+    void ManageGameOver()
+    {
+        // manage livingPlayers
+        foreach (GameObject player in players)
+        {
+            if (player.GetComponent<PlayerController>().HP > 0)
+            {
+                livingPlayers.Add(player);
+            }
+            else
+            {
+                livingPlayers.Remove(player);
+            }
+        }
+
+        // manage secondsSinceGameOver
+        if (livingPlayers.Count <= 1)
+        {
+            secondsSinceGameOver += Time.deltaTime;
+        }
+        else
+        {
+            secondsSinceGameOver = 0f;
+        }
+
+        // display winner
+        if (secondsSinceGameOver > 3f)
+        {
+            Time.timeScale = 0f;
+            TextMeshPro gameOverText = Instantiate(gameOverTextPrefab, transform, true).GetComponent<TextMeshPro>();
+            menuManager.GetComponent<MenuController>().EnableQuitAndRestartButtons();
+            if (livingPlayers.Count == 1)
+            {
+                PlayerController PC = livingPlayers.First().GetComponent<PlayerController>();
+                gameOverText.text = "P" + PC.playerNumber + " WINS";
+                gameOverText.color = livingPlayers.First().GetComponent<PlayerController>().color;
+            }
+            else
+            { 
+                gameOverText.text = "DRAW";
+            }
+        }
     }
 }

@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuController : MonoBehaviour
+public class MenuController : MonoBehaviour
 {
+    [SerializeField] private GameObject quitButton;
+    [SerializeField] private GameObject restartButton;
+
     private float secondsHoldingQuit;
 
     private void Start()
     {
         if (SceneManager.GetActiveScene().name != "MainMenu")
             DisableChildren();
+        DisableQuitAndRestartButtons();
     }
 
     void Update()
@@ -35,14 +39,14 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    void Restart()
+    public void Restart()
     {
         Debug.Log("restart");
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    void Quit()
+    public void Quit()
     {
         Debug.Log("quit");
 
@@ -65,5 +69,19 @@ public class MainMenuController : MonoBehaviour
        {
             child.gameObject.SetActive(false);
        }
+    }
+
+    public void EnableQuitAndRestartButtons()
+    {
+        Debug.Log("enable quit and restart buttons");
+        quitButton.SetActive(true);
+        restartButton.SetActive(true);
+    }
+
+    public void DisableQuitAndRestartButtons()
+    {
+        Debug.Log("disable quit and restart buttons");
+        quitButton.SetActive(false);
+        restartButton.SetActive(false);
     }
 }

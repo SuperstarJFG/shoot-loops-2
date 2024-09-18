@@ -349,6 +349,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4692531805886455576, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5762610525688929584, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: gameOverTextPrefab
+      value: 
+      objectReference: {fileID: 8926596476657685174, guid: 521579515eb53254a8aea7b879ccd2d1, type: 3}
     - target: {fileID: 6094079992944243652, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -399,7 +407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9007719773234480121, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_Name
-      value: Player Spawner
+      value: Player Manager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

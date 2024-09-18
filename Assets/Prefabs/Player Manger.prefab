@@ -1195,7 +1195,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CONTIUE
+  m_text: continue
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1228,7 +1228,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1631,7 +1631,7 @@ GameObject:
   - component: {fileID: 5762610525688929584}
   - component: {fileID: 1361216462589152546}
   m_Layer: 0
-  m_Name: Player Spawner
+  m_Name: Player Manger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1673,6 +1673,8 @@ MonoBehaviour:
   humanPlayerCountSlider: {fileID: 1450171101432986714}
   AIDifficultySlider: {fileID: 135310452024118140}
   countdownPrefab: {fileID: 945601310776658105, guid: 40d18c3a635da6b489b9bc3871385c19, type: 3}
+  gameOverTextPrefab: {fileID: 8926596476657685174, guid: 521579515eb53254a8aea7b879ccd2d1, type: 3}
+  menuManager: {fileID: 6512609996894073178, guid: 573bb5e7f903f944d845ca4fd8c095ab, type: 3}
 --- !u!82 &1361216462589152546
 AudioSource:
   m_ObjectHideFlags: 0
