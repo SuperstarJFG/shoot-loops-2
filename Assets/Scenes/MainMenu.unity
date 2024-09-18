@@ -357,6 +357,10 @@ PrefabInstance:
       propertyPath: gameOverTextPrefab
       value: 
       objectReference: {fileID: 8926596476657685174, guid: 521579515eb53254a8aea7b879ccd2d1, type: 3}
+    - target: {fileID: 5762610525688929584, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: quitAndRestartPrefab
+      value: 
+      objectReference: {fileID: 7826584611237116818, guid: 403937face6c7364592277d62ad32890, type: 3}
     - target: {fileID: 6094079992944243652, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

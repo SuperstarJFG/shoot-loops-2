@@ -15,7 +15,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Slider AIDifficultySlider;
     [SerializeField] private GameObject countdownPrefab;
     [SerializeField] private GameObject gameOverTextPrefab;
-    [SerializeField] private GameObject menuManager;
+    [SerializeField] private GameObject quitAndRestartPrefab;
 
     [Range(0, 4)] private int humanPlayerCount;
     [Range(1, 9)] private int AIDifficulty;
@@ -30,9 +30,14 @@ public class PlayerManager : MonoBehaviour
     private Scene scene;
     private AudioSource audioSource;
     private float secondsSinceGameOver;
+    private bool gameOver;
 
     void Start()
     {
+        Time.timeScale = 1f;
+
+        gameOver = true;
+
         audioSource = GetComponent<AudioSource>();
 
         switch (SceneManager.GetActiveScene().name)
@@ -53,12 +58,14 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         ManageAISlider();
-        if (scene == Scene.play)
+        if (scene == Scene.play && !gameOver)
             ManageGameOver();
     }
 
     public void SpawnPlayers()
     {
+        gameOver = false;
+
         if (scene == Scene.mainMenu)
         { 
             humanPlayerCount = 0;
@@ -75,7 +82,7 @@ public class PlayerManager : MonoBehaviour
 
         if (scene == Scene.howToPlay)
         {
-            menuManager.GetComponent<MenuController>().EnableQuitAndRestartButtons();
+            Instantiate(quitAndRestartPrefab);
             for (int i = 1; i < humanPlayerCount + 1; i++)
                 SpawnPlayer(i, false);
         }
@@ -137,6 +144,25 @@ public class PlayerManager : MonoBehaviour
 
     void ManageGameOver()
     {
+        // display winner
+        if (secondsSinceGameOver > 3f)
+        {
+            TextMeshPro gameOverText = Instantiate(gameOverTextPrefab, transform, true).GetComponent<TextMeshPro>();
+            Instantiate(quitAndRestartPrefab);
+            if (livingPlayers.Count == 1)
+            {
+                PlayerController PC = livingPlayers.First().GetComponent<PlayerController>();
+                gameOverText.text = "P" + PC.playerNumber + " WINS";
+                gameOverText.color = livingPlayers.First().GetComponent<PlayerController>().color;
+            }
+            else
+            {
+                gameOverText.text = "DRAW";
+            }
+            gameOver = true;
+            Time.timeScale = 0f;
+        }
+
         // manage livingPlayers
         foreach (GameObject player in players)
         {
@@ -158,24 +184,6 @@ public class PlayerManager : MonoBehaviour
         else
         {
             secondsSinceGameOver = 0f;
-        }
-
-        // display winner
-        if (secondsSinceGameOver > 3f)
-        {
-            Time.timeScale = 0f;
-            TextMeshPro gameOverText = Instantiate(gameOverTextPrefab, transform, true).GetComponent<TextMeshPro>();
-            menuManager.GetComponent<MenuController>().EnableQuitAndRestartButtons();
-            if (livingPlayers.Count == 1)
-            {
-                PlayerController PC = livingPlayers.First().GetComponent<PlayerController>();
-                gameOverText.text = "P" + PC.playerNumber + " WINS";
-                gameOverText.color = livingPlayers.First().GetComponent<PlayerController>().color;
-            }
-            else
-            { 
-                gameOverText.text = "DRAW";
-            }
         }
     }
 }

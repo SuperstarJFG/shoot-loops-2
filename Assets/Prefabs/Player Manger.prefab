@@ -1674,7 +1674,7 @@ MonoBehaviour:
   AIDifficultySlider: {fileID: 135310452024118140}
   countdownPrefab: {fileID: 945601310776658105, guid: 40d18c3a635da6b489b9bc3871385c19, type: 3}
   gameOverTextPrefab: {fileID: 8926596476657685174, guid: 521579515eb53254a8aea7b879ccd2d1, type: 3}
-  menuManager: {fileID: 6512609996894073178, guid: 573bb5e7f903f944d845ca4fd8c095ab, type: 3}
+  quitAndRestartPrefab: {fileID: 7826584611237116818, guid: 403937face6c7364592277d62ad32890, type: 3}
 --- !u!82 &1361216462589152546
 AudioSource:
   m_ObjectHideFlags: 0
