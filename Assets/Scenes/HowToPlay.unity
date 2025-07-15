@@ -132,11 +132,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1809777257820739762, guid: 4269c02f4f28fde48bde9162b2519cee, type: 3}
       propertyPath: m_text
-      value: 'your shots hurt hurt your foe, but they heal you.
+      value: 'your shots hurt your foe, but they heal you.
 
 
-        this is
-        practice mode, you can''t die here. '
+        this is practice
+        mode, you can''t die here. '
       objectReference: {fileID: 0}
     - target: {fileID: 1809777257820739762, guid: 4269c02f4f28fde48bde9162b2519cee, type: 3}
       propertyPath: m_fontSize
@@ -473,9 +473,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2208326068979208821, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864952883224277488, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4424989632629118428, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_text
       value: practice
+      objectReference: {fileID: 0}
+    - target: {fileID: 5331685678663240858, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 6094079992944243652, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_LocalPosition.x
@@ -516,6 +528,10 @@ PrefabInstance:
     - target: {fileID: 6094079992944243652, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7193012932797012251, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 8509238474288182021, guid: f4b96d8a67f73764580c1d04e2fe4a18, type: 3}
       propertyPath: m_AnchorMax.y
